@@ -19,13 +19,14 @@ blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 
 gray_padded = np.pad(gray, [(7, 7), (7, 7)], mode='constant')
 
-feature_vector = np.array([])
+feature_vector = []
 
-for ii in range(0, image.shape[0]):
-    for jj in range(0, image.shape[1]):
+for ii in range(0, gray.shape[0]):
+    row = []
+    for jj in range(0, gray.shape[1]):
         pixel = (ii + 7, jj + 7)
 
-        square = gray[pixel[0]-7 : pixel[0]+8, pixel[1]-7 : pixel[1]+8]
+        square = gray_padded[pixel[0]-7 : pixel[0]+8, pixel[1]-7 : pixel[1]+8]
         #print square.shape
         #surf = cv2.SURF(.1)
         #kp, des = surf.detectAndCompute(square,None)
@@ -34,7 +35,9 @@ for ii in range(0, image.shape[0]):
         features = np.append(features, np.std(square))
 
         #print features.shape
-        feature_vector = np.append(feature_vector, features)
+        row.append(features)
+    feature_vector.append(np.array(row))
+feature_vector = np.array(feature_vector)
 
 
 print feature_vector.shape
