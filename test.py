@@ -158,4 +158,3 @@ def test(filename, trainingfile):
 
 if __name__ == "__main__":
     test('doggo2.png', 'doggo.png')
-    # print(set_classifiers())

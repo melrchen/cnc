@@ -104,6 +104,9 @@ with open('model.json', 'w') as json_file:
 model.save_weights("model.h5")
 
 
+
+
+
 if __name__ == '__main__':
     pass
     # score = loaded_model.evaluate(X, Y, verbose=0)

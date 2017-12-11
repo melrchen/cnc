@@ -94,6 +94,4 @@ def SVM_classification(filename):
 
 
 if __name__ == "__main__":
-	# Y = pp.discretize_colors('doggo.png')
-	# print((Y.shape[0],Y.shape[1]))
 	SVM_classification('doggo.png')

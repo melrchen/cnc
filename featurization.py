@@ -57,7 +57,6 @@ def featurize(filename):
 	feature_vector = np.array(feature_vector)
 	feature_vector = PCAthatbitch(feature_vector)
 
-
 	return feature_vector
 #surf = cv2.SURF(500)
 #kp, des = surf.detectAndCompute(image,None)

@@ -6,6 +6,7 @@ import matplotlib.image as img
 import cv2
 import os
 from keras.preprocessing import image
+from PIL import Image
 
 # Paths to images: list of tuple (filepath, one-hot encoding)
 PLAIN_PATHS = [os.path.join(os.getcwd(), 'plain', file) for file in os.listdir('plain')]
@@ -58,6 +59,48 @@ def save_grayscale(filename, path):
     cv2.imwrite(path, graysc)
 
 
+def resizeAndPad(img, size=(224, 224), padColor=0):
+
+    h, w = img.shape[:2]
+    sh, sw = size
+
+    # interpolation method
+    if h > sh or w > sw: # shrinking image
+        interp = cv2.INTER_AREA
+    else: # stretching image
+        interp = cv2.INTER_CUBIC
+
+    # aspect ratio of image
+    aspect = w/h
+
+    # compute scaling and pad sizing
+    if aspect > 1: # horizontal image
+        new_w = sw
+        new_h = np.round(new_w/aspect).astype(int)
+        pad_vert = (sh-new_h)/2
+        pad_top, pad_bot = np.floor(pad_vert).astype(int), np.ceil(pad_vert).astype(int)
+        pad_left, pad_right = 0, 0
+    elif aspect < 1: # vertical image
+        new_h = sh
+        new_w = np.round(new_h*aspect).astype(int)
+        pad_horz = (sw-new_w)/2
+        pad_left, pad_right = np.floor(pad_horz).astype(int), np.ceil(pad_horz).astype(int)
+        pad_top, pad_bot = 0, 0
+    else: # square image
+        new_h, new_w = sh, sw
+        pad_left, pad_right, pad_top, pad_bot = 0, 0, 0, 0
+
+    # set pad color
+    if len(img.shape) is 3 and not isinstance(padColor, (list, tuple, np.ndarray)): # color image but only one color provided
+        padColor = [padColor]*3
+
+    # scale and pad
+    scaled_img = cv2.resize(img, (new_w, new_h), interpolation=interp)
+    scaled_img = cv2.copyMakeBorder(scaled_img, pad_top, pad_bot, pad_left, pad_right, borderType=cv2.BORDER_CONSTANT, value=padColor)
+
+    return scaled_img
+
+
 def keras_preprocess(filepath):
     '''
     Does preprocessing on the image (given by filepath) as seen in
@@ -101,12 +144,22 @@ def load_data():
 
 if __name__ == '__main__':
     # Save grayscale versions of images
-    # for file in os.listdir('mountain'):
-    #     img_path = os.path.join(os.getcwd(), 'mountain', file)
+    # for file in os.listdir('beach'):
+    #     img_path = os.path.join(os.getcwd(), 'beach', file)
     #     path = os.path.join(os.getcwd(), file[:-5] + 'gray' + '.jpeg')
     #     save_grayscale(img_path, path)
 
-    x_train, y_train = np.array(x_train), np.array(y_train)
-    x_test, y_test = np.array(x_test), np.array(y_test)
+    # x_train, y_train = np.array(x_train), np.array(y_train)
+    # x_test, y_test = np.array(x_test), np.array(y_test)
 
-    print(np.shape(x_train[0]), np.shape(y_train[0]))
+    # print(np.shape(x_train[0]), np.shape(y_train[0]))
+
+    # CHANGE EVERYTHING TO 224 x 224... lol
+    # for file in os.listdir('cave'):
+    #     img_path = os.path.join(os.getcwd(), 'cave', file)
+
+    #     img = cv2.imread(img_path)
+    #     img = resizeAndPad(img)
+
+    #     cv2.imwrite(file, img)
+    pass

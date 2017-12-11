@@ -14,4 +14,4 @@ validation to avoid overfitting the model.
 Then, given inputs of the image and the probability vector, we train an NN to output colorings
 of the image in the U and V color channels, using RMSE as the error function.
 
-Image classes: beach, city, plain, cave, mountain
+Image classes: beach, city, lowlands, cave, glacier
