@@ -55,10 +55,11 @@ def upsample_hypercolumn(filepath):
         convmaps = np.reshape(hypercolumn, (hypercolumn.shape[-1], 
             hypercolumn.shape[1], hypercolumn.shape[2]))
 
-        for convmap in convmaps:
-            upscaled = sp.misc.imresize(convmap, size=(224, 224),
-                                    mode="F", interp='bilinear')
-            upsampled.append(upscaled)
+        for i, convmap in enumerate(convmaps): # Add upscaled feature maps to upsampled
+            if i % 8 == 0:
+                upscaled = sp.misc.imresize(convmap, size=(224, 224),
+                                        mode="F", interp='bilinear')
+                upsampled.append(upscaled)
     
     upsampled = np.array(upsampled)
     upsampled = np.reshape(upsampled, (upsampled.shape[1], upsampled.shape[2], 

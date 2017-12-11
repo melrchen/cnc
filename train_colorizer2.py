@@ -14,7 +14,7 @@ import numpy as np
 # CONV LAYER MODEL AT THE END
 batch_size = 5
 epochs = 20
-image_input = Input(shape=(224, 224, 832))
+image_input = Input(shape=(224, 224, 208))
 
 print('Loading data...')
 # Load in data
@@ -27,7 +27,7 @@ print('Loaded data')
 # MINI MODEL WITH U, V CHANNELS
 model = Sequential()
 model.add(Conv2D(128, (3,3), strides = (1,1), padding = 'same', activation="relu",
-    input_shape = (224, 224, 832)))
+    input_shape = (224, 224, 208)))
 model.add(BN())
 model.add(Conv2D(64, (3,3), strides = (1,1), padding = 'same', activation = "relu"))
 model.add(BN())
