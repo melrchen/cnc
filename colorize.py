@@ -89,23 +89,43 @@ def extract_UV(filepath):
     '''
     UV = color(filepath)
     print(UV.shape)
+    print('UV: ',UV)
+    input()
 
-    UV = np.reshape(UV, (2, 224, 224, 1))
+    UV = np.squeeze(UV)
 
-    U, V = 128 * UV[0], 128 * UV[1]
+    U, V = UV[:,:,0], UV[:,:,1]
+    U *= 128
+    V *= 128
+    print(U.shape)
     print(U)
-    cv2.imshow('BGR',U)
+
+    print('\n')
+    print(V)
+
+    # plt.imshow('U', U)
+    # plt.show()
+
+    cv2.imshow('V', V)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
     Y = cv2.imread(filepath)[:,:,0]
-    Y = np.reshape(Y, (224, 224, 1))
+    cv2.imshow('Y', Y)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    Y, U, V = np.reshape(Y, (224, 224, 1)), np.reshape(U, (224, 224, 1)), np.reshape(V, (224, 224, 1))
     yuv = np.concatenate((Y, U, V), -1)
+
+    cv2.imshow('YUV',yuv)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     print(yuv.shape)
 
     # Convert to BGR
-    bgr = cv2.cvtColor(predicted,cv2.COLOR_YUV2BGR)
+    bgr = cv2.cvtColor(yuv,cv2.COLOR_YUV2BGR)
     cv2.imshow('BGR',bgr)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

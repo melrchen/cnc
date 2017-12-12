@@ -31,7 +31,7 @@ model.add(Conv2D(128, (3,3), strides = (1,1), padding = 'same', activation="relu
 model.add(BN())
 model.add(Conv2D(64, (3,3), strides = (1,1), padding = 'same', activation = "relu"))
 model.add(BN())
-model.add(Conv2D(2, (3,3), strides = (1,1), padding = 'same', activation = "tanh"))
+model.add(Conv2D(2, (3,3), strides = (1,1), padding = 'same', activation = "sigmoid"))
 
 model.compile(loss=keras.losses.mean_squared_error, optimizer='sgd')
 # Get two branches

@@ -75,7 +75,7 @@ def UVchannels(filepath):
     U = np.reshape(U, (224, 224, 1))
     V = np.reshape(V, (224, 224, 1))
 
-    x = np.concatenate((U/128, V/128), -1) # Converts to -1, 1
+    x = np.concatenate((U/256, V/256), -1) # Converts to 0, 1
     return x
 
 
