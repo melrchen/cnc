@@ -13,37 +13,42 @@ import numpy as np
     
 # CONV LAYER MODEL AT THE END
 batch_size = 5
-epochs = 20
-image_input = Input(shape=(224, 224, 208))
+epochs = 15
+image_input = Input(shape=(224, 224, 104))
 
 print('Loading data...')
 # Load in data
 (x_train, y_train), (x_test, y_test) = pp.load_data()
-y_train = np.reshape(y_train, tuple(list(y_train.shape) + [1]))
-y_test = np.reshape(y_test, tuple(list(y_test.shape) + [1]))
+# y_train = np.reshape(y_train, tuple(list(y_train.shape) + [1]))
+# y_test = np.reshape(y_test, tuple(list(y_test.shape) + [1]))
 
 print('Loaded data')
 
 # MINI MODEL WITH U, V CHANNELS
 model = Sequential()
 model.add(Conv2D(128, (3,3), strides = (1,1), padding = 'same', activation="relu",
-    input_shape = (224, 224, 208)))
+    input_shape = (224, 224, 104)))
 model.add(BN())
 model.add(Conv2D(64, (3,3), strides = (1,1), padding = 'same', activation = "relu"))
 model.add(BN())
-model.add(Conv2D(1, (3,3), strides = (1,1), padding = 'same', activation = "tanh"))
+model.add(Conv2D(2, (3,3), strides = (1,1), padding = 'same', activation = "tanh"))
 
+model.compile(loss=keras.losses.mean_squared_error, optimizer='sgd')
 # Get two branches
-U = model(image_input)
-V = model(image_input) 
+# UV = model(image_input)
+# print(UV.shape)
+# input()
+# # V = model(image_input) 
 
-output = keras.layers.concatenate([U, V], axis=1) # Concatenate U, V outputs
+# output = keras.layers.concatenate([U, V], axis=1) # Concatenate U, V outputs
+# print(output.shape)
+# input()
 
 # FINAL MODEL TAKING INTO ACCOUNT BRANCHING/LOSS
-final_model = Model(inputs = image_input, outputs = output)
+# final_model = Model(inputs = image_input, outputs = output)
 
-final_model.compile(loss=keras.losses.mean_squared_error,
-              optimizer='sgd')
+# final_model.compile(loss=keras.losses.mean_squared_error,
+#               optimizer='sgd')
 
 print('Compiled Model')
 
@@ -63,12 +68,21 @@ print('======TRAINING======')
 print('x shape: ',x_train.shape)
 print('y shape: ', y_train.shape)
 
-final_model.fit(x_train, y_train,
+
+model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
           validation_data=(x_test, y_test),
           callbacks=[history])
+
+
+# final_model.fit(x_train, y_train,
+#           batch_size=batch_size,
+#           epochs=epochs,
+#           verbose=1,
+#           validation_data=(x_test, y_test),
+#           callbacks=[history])
 
 # print("=======VALIDATING=======")
 # score = final_model.evaluate(x_test, y_test, verbose=0)
@@ -86,15 +100,18 @@ final_model.fit(x_train, y_train,
 # plt.ylabel('Training Loss')
 # plt.show()
 
+print('Validation Loss: ', history.val_loss)
+print('Training loss: ', history.loss)
+
 print("======SAVING======")
 model_json = model.to_json()
 
 # Serialize model to JSON
-with open('model.json', 'w') as json_file:
+with open('citymodel.json', 'w') as json_file:
     json_file.write(model_json)
 
 # Serialize weights to HDF5
-model.save_weights("beachmodel.h5")
+model.save_weights("citymodel.h5")
 
 if __name__ == "__main__":
     # fit an image

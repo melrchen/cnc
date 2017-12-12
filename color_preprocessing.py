@@ -4,7 +4,6 @@ from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input
 from keras.models import Model, Sequential, model_from_json
 from keras.layers import Conv2D, BatchNormalization as BN
-# import matplotlib.pyplot as plt
 import cv2
 import scipy as sp
 import numpy as np
@@ -33,9 +32,6 @@ def get_hypercolumn(filepath):
     x = preprocess_input(x)
     x = x.astype('float32')
     x /= 255
-
-    # print(x)
-    # input()
 
     hypercolumns = feature_model.predict(x) # Get hypercolumns from model
 
@@ -76,7 +72,11 @@ def UVchannels(filepath):
     yuv = cv2.cvtColor(img,cv2.COLOR_BGR2YUV)
     __, U, V = cv2.split(yuv)
 
-    return np.concatenate((U/128, V/128)) # Converts to -1, 1
+    U = np.reshape(U, (224, 224, 1))
+    V = np.reshape(V, (224, 224, 1))
+
+    x = np.concatenate((U/128, V/128), -1) # Converts to -1, 1
+    return x
 
 
 def load_data():
@@ -90,16 +90,17 @@ def load_data():
     '''
     x_train, y_train, x_test, y_test = [], [], [], []
 
-    PATHS = [os.path.join(os.getcwd(), 'beach', file) for file in os.listdir('beach')]
-    GRAYPATHS = [os.path.join(os.getcwd(), 'beachgray', file) for file in os.listdir('beachgray')]
+    PATHS = [os.path.join(os.getcwd(), 'city', file) for file in os.listdir('city')]
+    GRAYPATHS = [os.path.join(os.getcwd(), 'citygray', file) for file in os.listdir('citygray')]
 
     print('Aggregating training data')
-    for i in range(50): # Add grayscale images to x_train
+    for i in range(400): # Add grayscale images to x_train
         x_train.append(upsample_hypercolumn(GRAYPATHS[i]))
         y_train.append(UVchannels(PATHS[i]))
+        # print(i)
 
     print('Aggregating validation data')
-    for i in range(50,75): # Add grayscale images to x_test
+    for i in range(400, 500): # Add grayscale images to x_test
         x_test.append(upsample_hypercolumn(GRAYPATHS[i]))
         y_test.append(UVchannels(PATHS[i]))
 
@@ -114,4 +115,6 @@ if __name__ == '__main__':
 
     # print('Y channel: ',img[100]/255)
     # get_hypercolumn(path)
-    upsample_hypercolumn(path)
+    # upsample_hypercolumn(path)
+
+    # UVchannels(path)
