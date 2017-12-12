@@ -4,7 +4,7 @@ from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input
 from keras.models import Model, Sequential, model_from_json
 from keras.layers import Conv2D, Input, BatchNormalization as BN
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import color_preprocessing as pp
 import cv2
 import scipy as sp
@@ -66,14 +66,17 @@ def color(filepath):
     print('Scene: ', scenes[scene[0]])
 
     # load model
-    json_file = open('plainmodel.json'.format(scene), 'r')
+    json_file = open('citymodel.json'.format(scene), 'r')
     loaded_model = model_from_json(json_file.read())
     json_file.close()
 
     # load model weights and colorize
-    loaded_model.load_weights('{}model.h5'.format(scenes[scene[0]]))
+    loaded_model.load_weights('{}model.h5'.format('city'))
+        # scenes[scene[0]]))
     loaded_model.compile(loss=keras.losses.mean_squared_error,
               optimizer='sgd')
+
+    # print(loaded_model.layers)
 
     inp = np.reshape(pp.upsample_hypercolumn(filepath), (1, 224, 224, 104))
     
@@ -85,7 +88,27 @@ def extract_UV(filepath):
     Returns the U and V channels for the filepath
     '''
     UV = color(filepath)
-    
+    print(UV.shape)
+
+    UV = np.reshape(UV, (2, 224, 224, 1))
+
+    U, V = 128 * UV[0], 128 * UV[1]
+    print(U)
+    cv2.imshow('BGR',U)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    Y = cv2.imread(filepath)[:,:,0]
+    Y = np.reshape(Y, (224, 224, 1))
+    yuv = np.concatenate((Y, U, V), -1)
+
+    print(yuv.shape)
+
+    # Convert to BGR
+    bgr = cv2.cvtColor(predicted,cv2.COLOR_YUV2BGR)
+    cv2.imshow('BGR',bgr)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 
@@ -93,6 +116,6 @@ def extract_UV(filepath):
 
 
 if __name__ == '__main__':
-    path = os.path.join(os.getcwd(), 'plaingray.jpeg')
+    path = os.path.join(os.getcwd(), 'citygray.jpeg')
 
     extract_UV(path)
