@@ -13,7 +13,7 @@ import numpy as np
     
 # CONV LAYER MODEL AT THE END
 batch_size = 5
-epochs = 15
+epochs = 1
 image_input = Input(shape=(224, 224, 104))
 
 print('Loading data...')
@@ -31,9 +31,11 @@ model.add(Conv2D(128, (3,3), strides = (1,1), padding = 'same', activation="relu
 model.add(BN())
 model.add(Conv2D(64, (3,3), strides = (1,1), padding = 'same', activation = "relu"))
 model.add(BN())
-model.add(Conv2D(2, (3,3), strides = (1,1), padding = 'same', activation = "sigmoid"))
+model.add(Conv2D(2, (3,3), strides = (1,1), padding = 'same', activation = "tanh"))
 
-model.compile(loss=keras.losses.mean_squared_error, optimizer='sgd')
+sgd = keras.optimizers.SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
+
+model.compile(loss=keras.losses.mean_absolute_error, optimizer=sgd)
 # Get two branches
 # UV = model(image_input)
 # print(UV.shape)
@@ -107,11 +109,11 @@ print("======SAVING======")
 model_json = model.to_json()
 
 # Serialize model to JSON
-with open('citymodel.json', 'w') as json_file:
+with open('beachmodel.json', 'w') as json_file:
     json_file.write(model_json)
 
 # Serialize weights to HDF5
-model.save_weights("citymodel.h5")
+model.save_weights("beachmodel.h5")
 
 if __name__ == "__main__":
     # fit an image

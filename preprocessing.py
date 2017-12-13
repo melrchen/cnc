@@ -6,6 +6,7 @@ import matplotlib.image as img
 import cv2
 import sklearn
 import sklearn.cluster
+import os
 
 def color_dist(c1, c2):
     '''
@@ -49,9 +50,9 @@ def read_in(filename):
     yuv = cv2.cvtColor(bgr,cv2.COLOR_BGR2YUV)
     # print("yuv size")
     # print(yuv.shape)
-    #cv2.imshow('YUV',yuv)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    # cv2.imshow('YUV',yuv)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     return bgr, yuv
 
@@ -128,4 +129,31 @@ def discretize_colors(filename):
     # cv2.destroyAllWindows()
 
 
-                
+if __name__ == "__main__":
+    # 0-255?
+
+    path = os.path.join(os.getcwd(), 'city.jpeg')
+    yuv = read_in(path)[1]
+
+    print(yuv.shape)
+    y, u, v = cv2.split(yuv)
+    # y = yuv[:,:,0]
+    # print(y)
+    # cv2.imshow('y', y)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # print(np.amin(u), np.amax(u))
+    # print(np.amin(v), np.amax(v))
+    # print(u[120])
+    # print(u[1])
+    print(u.shape)
+    print(type(u[0][0]))
+    cv2.imshow('u', u)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    print(v)
+    cv2.imshow('y', v)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
